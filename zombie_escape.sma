@@ -3974,6 +3974,9 @@ show_menu_player_list(id)
 		{
 			case ACTION_ZOMBIEFY_HUMANIZE: // Zombiefy/Humanize command
 			{
+				if (g_newround)
+					return PLUGIN_HANDLED;
+
 				if (g_zombie[player])
 				{
 					if (allowed_human(player) && (userflags & g_access_flag[ACCESS_MAKE_HUMAN]))
@@ -4701,7 +4704,7 @@ public menu_zclass(id, menuid, item)
 	}
 	else
 	{
-		zp_colored_print(id, "^x04[ZE]^x01 You don´t have enough level for this Zombie.")
+		zp_colored_print(id, "^x04[ZE]^x01 You donï¿½t have enough level for this Zombie.")
 	}
 	
 	menu_destroy(menuid)
