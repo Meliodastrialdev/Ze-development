@@ -5,6 +5,7 @@
 #include <hamsandwich>
 #include <zombieplague>
 #include <fakemeta_util>
+#include <crxranks>
 
 #define PLUGIN    "Choose class"
 #define VERSION    "милион какая та"
@@ -408,8 +409,13 @@ public menu_handler(id, menu, item)
 	{
         case 1:
         {
-			give_class1(id)
-			menu_destroy(menu);
+			if crxranks_get_user_level(id) > 0 {
+				give_class1(id)
+				menu_destroy(menu);
+			}
+			else {
+				client_print(id, print_chat, "This unlocks at level 0.");
+			}
 			return PLUGIN_HANDLED
 		}
 		case 2:
