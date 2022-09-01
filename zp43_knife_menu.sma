@@ -265,7 +265,7 @@ public client_disconnected(id)
 public event_NewRound()
 {
 	new i
-	for (i=1; i<=33; i++)
+	for (i=1; i<=32; i++)
 	{
 		g_block_knife[i] = true
 	}
