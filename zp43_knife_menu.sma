@@ -128,6 +128,9 @@ new g_jump[33]
 //new BeaconSprite
 new g_sp[33]
 
+// new boolean variable 
+new bool:g_block_knife[33] = true
+
 public plugin_init()                                                                         
 {                                                                                                                           
 register_plugin(PLUGIN,VERSION,AUTHOR)                                                  
@@ -137,6 +140,9 @@ register_event("CurWeapon", "weapon_charge", "be","1=1")
 register_forward(FM_PlayerPreThink, "fw_PlayerPreThink")                             
 RegisterHam(Ham_TakeDamage, "player", "fw_TakeDamage") 
 register_forward(FM_EmitSound, "CEntity__EmitSound")
+// To enable menu every round 
+// this will detect new round and make it true at round start
+register_event("HLTV", "event_NewRound", "a", "1=0", "2=0")
 
 register_clcmd("drop","next_sp")                                                                  
 register_clcmd("say /knife","start_menu")
@@ -252,6 +258,17 @@ public client_disconnected(id)
 {
 	jumpnum[id] = 0
 	dojump[id] = false 
+}
+
+// at start of every round make the variable true for everyone 
+public event_NewRound()
+{
+	new i
+	for (i=1; i<=33; i++)
+	{
+		g_block_knife[i] = true
+	}
+	
 }
 
 public fw_TakeDamage(victim, inflictor, attacker, Float:damage, damage_type)
@@ -629,10 +646,10 @@ public CEntity__EmitSound(id, channel, const sample[], Float:volume, Float:attn,
 	return HAM_IGNORED
 }
 
-public start_menu(id, g_block_knife_menu)                                                                                     
+public start_menu(id)                                                                                     
 {    
-                                                     
-	if(!zp_get_user_zombie(id) && g_block_knife_menu(id))
+    // check if user is either zombie or if he has already used the knife menu this round                                  
+	if((!zp_get_user_zombie(id)) && g_block_knife[id])
          {                                                                                         
 		static menu[555], iLen            
 		iLen = 0                                                                                         
@@ -742,7 +759,9 @@ public start_menu(id, g_block_knife_menu)
 		iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\y[\w0\y] \rВыход")                                          
 		key0 |= MENU_KEY_0                                                                    
 		
-		show_menu(id, key0, menu, -1, "Menu_0")                                                                            
+		show_menu(id, key0, menu, -1, "Menu_0")    
+		// after displaying the menu, we will disable the menu for that player  
+		g_block_knife[id] = false                                                                      
 	}                                                                                         
 	else                                                          
 	{
