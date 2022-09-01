@@ -252,6 +252,7 @@ public client_putinserver(id)
 	s_knife4[id] = false                 
 	s_knife5[id] = false                              
 	s_knife6[id] = false
+	g_block_knife[id] = true
 }
 
 public client_disconnected(id)
