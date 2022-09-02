@@ -5,10 +5,11 @@
 #include <zombieplague> 
 #include <hamsandwich>
 #include <engine> 
+#include <crxranks>
 
 #define PLUGIN  "Bn_zp_knife"                                                                                                     
-#define VERSION "2.5"                                     
-#define AUTHOR  "NEO"         
+#define VERSION "3.0"                                     
+#define AUTHOR  "NEO"    
 
 #define TASK_FBURN     100
 #define TASK_INFO      333
@@ -29,21 +30,21 @@ new s_knife0[33],s_knife1[33],s_knife2[33],s_knife3[33],s_knife4[33],s_knife5[33
 new g_block[33]        
 new bool:g_block_knife_menu[33]                           
 
-new Knife_v_0[]    = "models/v_knife.mdl"                                               
-new Knife_v_1[]    = "models/sG_Knifes/Knifes/Knife_v_1.mdl"                                                                                                                                                
-new Knife_v_2[]    = "models/sG_Knifes/Knifes/Knife_v_2.mdl"                                                                                      
-new Knife_v_3[]    = "models/sG_Knifes/Knifes/Knife_v_3.mdl"                                                                                                                                                                             
-new Knife_v_4[]    = "models/sG_Knifes/Knifes/Knife_v_4.mdl"                                                                                
-new Knife_v_5[]    = "models/sG_Knifes/Knifes/Knife_v_5.mdl"                                                                                                                                                                             
-new Knife_v_6[]    = "models/sG_Knifes/Knifes/Knife_v_6.mdl"          
+new Knife_v_0[]    = "models/v_knifered.mdl"   // Default                                          
+new Knife_v_1[]    = "models/sG_Knifes/Knifes/v_razor.mdl"   // Razor  | X2 DMG                                                                                                                                          
+new Knife_v_2[]    = "models/sG_Knifes/Knifes/Knife_v_2.mdl"  // Minecraft Sword  | X3 DMG + Knockback                                                                                  
+new Knife_v_3[]    = "models/sG_Knifes/Knifes/v_ruyistick.mdl"  // Ruyi Stick  | MultiJumps                                                                                                                                                                         
+new Knife_v_4[]    = "models/sG_Knifes/Knifes/v_axefire.mdl"   // Axe Fire |   X4 DMG + Knockback ++                                                                         
+new Knife_v_5[]    = "models/sG_Knifes/Knifes/v_WarHammer.mdl"  // WarHammer Fire  | X5 DMG + Knockback +++                                                                                                                                                                         
+new Knife_v_6[]    = "models/sG_Knifes/Knifes/v_WarHammer.mdl"          
 
-new Knife_p_0[]    = "models/p_knife.mdl"                                                                                   
-new Knife_p_1[]    = "models/sG_Knifes/Knifes/Knife_p_1.mdl"                                                                                                                                                
-new Knife_p_2[]    = "models/sG_Knifes/Knifes/Knife_p_2.mdl"                                                                                      
-new Knife_p_3[]    = "models/sG_Knifes/Knifes/Knife_p_3.mdl"                                                                                                                                                                             
-new Knife_p_4[]    = "models/sG_Knifes/Knifes/Knife_p_4.mdl"                                                                                
-new Knife_p_5[]    = "models/sG_Knifes/Knifes/Knife_p_5.mdl"                                                                                                                                                                             
-new Knife_p_6[]    = "models/sG_Knifes/Knifes/Knife_p_6.mdl"
+new Knife_p_0[]    = "models/p_knife.mdl"   // Default                                                                                
+new Knife_p_1[]    = "models/p_knife.mdl"   // Razor                                                                                                                                           
+new Knife_p_2[]    = "models/sG_Knifes/Knifes/Knife_p_2.mdl"  // Minecraft Sword                                                                                    
+new Knife_p_3[]    = "models/sG_Knifes/Knifes/p_ruyistick.mdl"  // Ruyi Stick                                                                                                                                                                           
+new Knife_p_4[]    = "models/sG_Knifes/Knifes/p_axefire.mdl"  // Axe Fire                                                                              
+new Knife_p_5[]    = "models/sG_Knifes/Knifes/p_WarHammer.mdl"  // WarHammer Fire                                                                                                                                                                           
+new Knife_p_6[]    = "models/sG_Knifes/Knifes/p_WarHammer.mdl"
 
 new bool:nextround[33] // block menu
 
@@ -103,24 +104,15 @@ new const Knife6_sound[][] =
 "7erva4ok/zmmod/knife/Knife_6_stab.wav"
 }
 
-new speed_knife1,speed_knife2,speed_knife3,speed_knife4,speed_knife5,speed_knife6 // Speed
+new grav_knife5 // Gravity
 
-new grav_knife1,grav_knife2,grav_knife3,grav_knife4,grav_knife5,grav_knife6 //Gravity
-
-// new g_line_sozdatel_R,g_line_sozdatel_G,g_line_sozdatel_B,g_line_admin_R,g_line_admin_G,g_line_admin_B,g_line_vip_R,g_line_vip_G,g_line_vip_B // Lines (circle) 
-
-new gump_vip,gump_admin,gump_sozdatel // Extra Jumps
+new gump_vip // Extra Jumps
 
 new dmg_knife1,dmg_knife2,dmg_knife3,dmg_knife4,dmg_knife5,dmg_knife6 // DMG 
 
 new knock_knife1, knock_knife2, knock_knife3, knock_knife4, knock_knife5, knock_knife6 // Knockback
 
-//new g_off_line_sozdatel,g_off_line_admin,g_off_line_vip // Lines (circle) [Removed]
-
 new g_fire_time,g_fire_damage // Burn time 
-
-//new g_freeze_wait[33],g_frozen[33]
-//new g_time_freeze,g_time_freeze_wait
 
 new jumpnum[33] = 0                                                       
 new bool:dojump[33] = false                                                     
@@ -148,13 +140,11 @@ register_clcmd("drop","next_sp")
 register_clcmd("say /knife","start_menu")
 register_clcmd("knife","start_menu")
 
-set_cvar_string("bn_knife",VERSION)
-// Скорости ножей                                                                                                                                        
-// Гравитации ножей                                                                                                                                   
-// Урон ножей                                                                                   
+set_cvar_string("bn_knife",VERSION)                                                                                                                                 
+
 dmg_knife1 = register_cvar("zp_knife1_dmg", "2.0")                  
-dmg_knife2 = register_cvar("zp_knife2_dmg", "2.0")                                              
-dmg_knife3 = register_cvar("zp_knife3_dmg", "5.0")                                  
+dmg_knife2 = register_cvar("zp_knife2_dmg", "3.0")                                              
+dmg_knife3 = register_cvar("zp_knife3_dmg", "4.0")                                  
 dmg_knife4 = register_cvar("zp_knife4_dmg", "6.0") 
 dmg_knife5 = register_cvar("zp_knife5_dmg", "7.0")              
 dmg_knife6 = register_cvar("zp_knife6_dmg", "8.0") 
@@ -166,16 +156,18 @@ knock_knife4 = register_cvar("zp_knock_knife4", "4.0")
 knock_knife5 = register_cvar("zp_knock_knife5", "5.0")
 knock_knife6 = register_cvar("zp_knock_knife6", "6.0")
 
+grav_knife5 = register_cvar("zp_knife5_grav", "360") 
 
-// Цвет круга при прижке (Создатель)                                                                                                                                  
-// Цвет круга при прижке (Админ)                                                                                                                                                                                 
-// Отключение кругов                                                                                                                                              
-// Прыжки                                                                                 
+
+// ???? ????? ??? ?????? (?????????)                                                                                                                                  
+// ???? ????? ??? ?????? (?????)                                                                                                                                                                                 
+// ?????????? ??????                                                                                                                                              
+// ??????                                                                                 
 // gump_sozdatel = register_cvar("zp_maxjumps_sozdatel","5")                                                                                                      
 // gump_admin = register_cvar("zp_maxjumps_admin","3")                                            
 gump_vip = register_cvar("zp_maxjumps_vip","2")                                                            
-// Способности ножей                                                              
-g_fire_time = register_cvar("zp_burn_time","5")                                                     
+// ??????????? ?????                                                              
+g_fire_time = register_cvar("zp_burn_time","3")                                                     
 g_fire_damage = register_cvar("zp_burn_damage","15")
 
 // g_time_freeze = register_cvar("zp_freeze_time","3.0") 
@@ -314,148 +306,68 @@ public fw_TakeDamage(victim, inflictor, attacker, Float:damage, damage_type)
 		vec[1] += oldvelo[1] + 0;
 		set_pev(victim, pev_velocity, vec); 
 	}
-	if(weapon == CSW_KNIFE && g_knife3[attacker])
-	{                                                                                       
-		SetHamParamFloat(4, damage * get_pcvar_float(dmg_knife3))
-		
-		new Float:vec[3];
-		new Float:oldvelo[3];
-		pev(victim, pev_velocity, oldvelo);
-		create_velocity_vector(victim , attacker , vec);
-		vec[0] += oldvelo[0] + get_pcvar_float(knock_knife3);
-		vec[1] += oldvelo[1] + 0;
-		set_pev(victim, pev_velocity, vec);
-	}                                                
-	if(weapon == CSW_KNIFE && g_knife2[attacker])
-	{     
-		SetHamParamFloat(4, damage * get_pcvar_float(dmg_knife2))    
-		
-		new Float:vec[3];
-		new Float:oldvelo[3];
-		pev(victim, pev_velocity, oldvelo);
-		create_velocity_vector(victim , attacker , vec);
-		vec[0] += oldvelo[0] + get_pcvar_float(knock_knife2);
-		vec[1] += oldvelo[1] + 0;
-		set_pev(victim, pev_velocity, vec);
-	}                                                                                                       
-	if(weapon == CSW_KNIFE && g_knife1[attacker])                                    
-	{     
-		SetHamParamFloat(4, damage * get_pcvar_float(dmg_knife1))
-		
-		new Float:vec[3];
-		new Float:oldvelo[3];
-		pev(victim, pev_velocity, oldvelo);
-		create_velocity_vector(victim , attacker , vec);
-		vec[0] += oldvelo[0] + get_pcvar_float(knock_knife1);
-		vec[1] += oldvelo[1] + 0;
-		set_pev(victim, pev_velocity, vec);
-	}                                                          
-	return HAM_IGNORED                                                                 
-}
+	/*if(weapon == CSW_KNIFE && g_knife3[attacker])
+{                                                                                       
+	SetHamParamFloat(4, damage * get_pcvar_float(dmg_knife3))
+	
+	new Float:vec[3];
+	new Float:oldvelo[3];
+	pev(victim, pev_velocity, oldvelo);
+	create_velocity_vector(victim , attacker , vec);
+	vec[0] += oldvelo[0] + get_pcvar_float(knock_knife3);
+	vec[1] += oldvelo[1] + 0;
+	set_pev(victim, pev_velocity, vec);
+} */                                               
+if(weapon == CSW_KNIFE && g_knife2[attacker])
+{     
+	SetHamParamFloat(4, damage * get_pcvar_float(dmg_knife2))    
+	
+	new Float:vec[3];
+	new Float:oldvelo[3];
+	pev(victim, pev_velocity, oldvelo);
+	create_velocity_vector(victim , attacker , vec);
+	vec[0] += oldvelo[0] + get_pcvar_float(knock_knife2);
+	vec[1] += oldvelo[1] + 0;
+	set_pev(victim, pev_velocity, vec);
+}                                                                                                       
+if(weapon == CSW_KNIFE && g_knife1[attacker])                                    
+{     
+	SetHamParamFloat(4, damage * get_pcvar_float(dmg_knife1))
+	
+	new Float:vec[3];
+	new Float:oldvelo[3];
+	pev(victim, pev_velocity, oldvelo);
+	create_velocity_vector(victim , attacker , vec);
+	vec[0] += oldvelo[0] + get_pcvar_float(knock_knife1);
+	vec[1] += oldvelo[1] + 0;
+	set_pev(victim, pev_velocity, vec);
+}                                                          
+return HAM_IGNORED                                                                 
+}     
 
-/*public fw_PlayerPreThink(id)                                                                           
+public fw_PlayerPreThink(id)                                                                           
 {                                                                                                  
-	new weapon = get_user_weapon(id)        
-	if(weapon == CSW_KNIFE)                                                    
-	{ 
-		if(g_knife1[id])                                                   
-		{ 
-			g_jump[id] = 0 
-			set_user_maxspeed(id, get_pcvar_float(speed_knife1)) 
-			if ((pev(id, pev_button) & IN_JUMP) && !(pev(id, pev_oldbuttons) & IN_JUMP))           
-			{
-				new flags = pev(id, pev_flags)
-				new waterlvl = pev(id, pev_waterlevel)                                                                                          
-				if (!(flags & FL_ONGROUND))     
-					return FMRES_IGNORED               
-				if (flags & FL_WATERJUMP)                                                
-					return FMRES_IGNORED                                                           
-				if (waterlvl > 1)                                     
-					return FMRES_IGNORED                                                            
-				new Float:fVelocity[3]
-				pev(id, pev_velocity, fVelocity)                             
-				fVelocity[2] = get_pcvar_float(grav_knife1)                        
-				set_pev(id, pev_velocity, fVelocity)
-				set_pev(id, pev_gaitsequence, 6) 
-			}
-		}                                                                                                
-		if(g_knife2[id])                                                     
+new weapon = get_user_weapon(id)        
+if(weapon == CSW_KNIFE)                                                    
+{ 
+	if(g_knife3[id])
+	{
+		g_jump[id] = get_pcvar_num(gump_vip)
+		//set_user_maxspeed(id, get_pcvar_float(speed_knife5))
+		if ((pev(id, pev_button) & IN_JUMP) && !(pev(id, pev_oldbuttons) & IN_JUMP))                             
 		{
-			g_jump[id] = 0 
-			set_user_maxspeed(id, get_pcvar_float(speed_knife2))
-			if ((pev(id, pev_button) & IN_JUMP) && !(pev(id, pev_oldbuttons) & IN_JUMP))
-			{
-				new flags = pev(id, pev_flags)
-				new waterlvl = pev(id, pev_waterlevel)
-				if (!(flags & FL_ONGROUND))     
-					return FMRES_IGNORED               
-				if (flags & FL_WATERJUMP)                                                
-					return FMRES_IGNORED
-				if (waterlvl > 1)
-					return FMRES_IGNORED                    
-				new Float:fVelocity[3] 
-				pev(id, pev_velocity, fVelocity)
-				fVelocity[2] = get_pcvar_float(grav_knife2)                        
-				set_pev(id, pev_velocity, fVelocity)
-				set_pev(id, pev_gaitsequence, 6) 
-			}
-		}
-		if(g_knife3[id])
-		{
-			g_jump[id] = 0 
-			set_user_maxspeed(id, get_pcvar_float(speed_knife3))
-			if ((pev(id, pev_button) & IN_JUMP) && !(pev(id, pev_oldbuttons) & IN_JUMP))
-			{
-				new flags = pev(id, pev_flags)
-				new waterlvl = pev(id, pev_waterlevel)
-				if (!(flags & FL_ONGROUND))     
-					return FMRES_IGNORED               
-				if (flags & FL_WATERJUMP)                                                
-					return FMRES_IGNORED
-				if (waterlvl > 1)
-					return FMRES_IGNORED                    
-				new Float:fVelocity[3] 
-				pev(id, pev_velocity, fVelocity)
-				fVelocity[2] = get_pcvar_float(grav_knife3)                        
-				set_pev(id, pev_velocity, fVelocity)
-				set_pev(id, pev_gaitsequence, 6) 
-			}
-		}
-		if(g_knife4[id])
-		{                                               
-			g_jump[id] = get_pcvar_num(gump_vip)                   
-			set_user_maxspeed(id, get_pcvar_float(speed_knife4))
-			if ((pev(id, pev_button) & IN_JUMP) && !(pev(id, pev_oldbuttons) & IN_JUMP))
-			{
-				new flags = pev(id, pev_flags)                                                            
-				new waterlvl = pev(id, pev_waterlevel)
-				if (!(flags & FL_ONGROUND))     
-					return FMRES_IGNORED               
-				if (flags & FL_WATERJUMP)                                                
-					return FMRES_IGNORED
-				if (waterlvl > 1)
-					return FMRES_IGNORED                    
-				new Float:fVelocity[3]  
-				pev(id, pev_velocity, fVelocity)
-				fVelocity[2] = get_pcvar_float(grav_knife4)                        
-				set_pev(id, pev_velocity, fVelocity)
-				set_pev(id, pev_gaitsequence, 6) 
-			}
-		}
-		if(g_knife5[id])
-		{
-			g_jump[id] = get_pcvar_num(gump_admin)
-			set_user_maxspeed(id, get_pcvar_float(speed_knife5))
-			if ((pev(id, pev_button) & IN_JUMP) && !(pev(id, pev_oldbuttons) & IN_JUMP))                             
-			{
-				new flags = pev(id, pev_flags)
-				new waterlvl = pev(id, pev_waterlevel)                                                          
-				if (!(flags & FL_ONGROUND))     
-					return FMRES_IGNORED               
+			new flags = pev(id, pev_flags)
+			new waterlvl = pev(id, pev_waterlevel)  
+			
+			if (!(flags & FL_ONGROUND))     
+				return FMRES_IGNORED 
+				
 				if (flags & FL_WATERJUMP)                                                                
-					return FMRES_IGNORED                                                                         
+					return FMRES_IGNORED    
+				
 				if (waterlvl > 1)
-					return FMRES_IGNORED                    
+					return FMRES_IGNORED  
+				
 				new Float:fVelocity[3] 
 				pev(id, pev_velocity, fVelocity)                                                                
 				fVelocity[2] = get_pcvar_float(grav_knife5)                        
@@ -463,35 +375,13 @@ public fw_TakeDamage(victim, inflictor, attacker, Float:damage, damage_type)
 				set_pev(id, pev_gaitsequence, 6)                   
 			}                                                                                                           
 		}                                                                                  
-		if(g_knife6[id])                                                                                                    
-		{                                                                                      
-			set_task(0.5, "Ability", id + TASK_INFO)
-			g_jump[id] = get_pcvar_num(gump_sozdatel)                                                                 
-			set_user_maxspeed(id, get_pcvar_float(speed_knife6))                                                              
-			if ((pev(id, pev_button) & IN_JUMP) && !(pev(id, pev_oldbuttons) & IN_JUMP))                   
-			{                                                                             
-				new flags = pev(id, pev_flags)
-				new waterlvl = pev(id, pev_waterlevel)
-				if (!(flags & FL_ONGROUND))                                                                       
-					return FMRES_IGNORED                                                     
-				if (flags & FL_WATERJUMP)                                                                     
-					return FMRES_IGNORED
-				if (waterlvl > 1)                                                                           
-					return FMRES_IGNORED                                      
-				new Float:fVelocity[3]                                    
-				pev(id, pev_velocity, fVelocity)
-				fVelocity[2] = get_pcvar_float(grav_knife6)                        
-				set_pev(id, pev_velocity, fVelocity)               
-				set_pev(id, pev_gaitsequence, 6) 
-			}
-		}
 	}
 	else                                                     
 	{
 		g_jump[id] = 0
 	}
 	return FMRES_IGNORED
-}   */                                                             
+}  
 
 public zp_user_infected_post(id)                              
 {
@@ -648,127 +538,156 @@ public CEntity__EmitSound(id, channel, const sample[], Float:volume, Float:attn,
 }
 
 public start_menu(id)                                                                                     
-{    
-    // check if user is either zombie or if he has already used the knife menu this round                                  
+{                                                               
 	if((!zp_get_user_zombie(id)) && g_block_knife[id])
-         {                                                                                         
+	{                                                                                                                       
 		static menu[555], iLen            
 		iLen = 0                                                                                         
-		iLen = formatex(menu[iLen], charsmax(menu) - iLen, "\r[\yKnife Test\r]^n^n")          
+		iLen = formatex(menu[iLen], charsmax(menu) - iLen, "\rSG | Knife Menu 1.0^n^n")          
 		
 		if(s_knife0[id])
 		{                                                                                                              
-			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r[\y1\r] [\yKnife\r] [\yTest1\r] [\wSelected\r]^n")                            
+			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\d1. Knife Default \r~Selected^n")                            
 			key0 &= ~MENU_KEY_1                                                                                                   
 		}
 		else                                                                                                      
 		{                                                                                                                  
-			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r[\y1\r] [\yKnife\r] [\yTest1\r]^n")                                     
+			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r1. \wKnife Default^n")                                     
 			key0 |= MENU_KEY_1 
 		}
 		
-		if(s_knife1[id])
+		if(crxranks_get_user_level(id) >= 10)
 		{
-			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r[\y2\r] [\yПротон\r] [\yСкорость\r] [\wВыбрано\r]^n")                            
+		       if(s_knife1[id])
+		       {
+			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\d2. Razor [X2 DMG] \r~Selected^n")                            
 			key0 &= ~MENU_KEY_2
-		}                                                                                                                
-		else                                                                                                                    
-		{
-			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r[\y2\r] [\yПротон\r] [\yСкорость\r]^n")                                        
+		       }                                                                                                                
+		        else                                                                                                                    
+		       {
+			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r2. \wRazor \y[X2 DMG]^n")                                        
 			key0 |= MENU_KEY_2
-		}                                                                                                                
-		
-		if(s_knife2[id])
-		{
-			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r[\y3\r] [\yТемная Ночь\r] [\yГравитация\r] [\wВыбрано\r]^n")                            
-			key0 &= ~MENU_KEY_3
-		}                                                                                                              
+		       }  
+	         }
 		else
 		{
-			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r[\y3\r] [\yТемная Ночь\r] [\yГравитация\r]^n")                              
-			key0 |= MENU_KEY_3 
-		}                                                                                                                 
-		
-		if(s_knife3[id])                                                                                   
-		{
-			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r[\y4\r] [\yЯрость Солнца\r] [\yУрон x2\r] [\wВыбрано\r]^n^n")                            
-			key0 &= ~MENU_KEY_4
-		}                                                                                                                 
-		else
-		{                                                                                                               
-			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r[\y4\r] [\yЯрость Солнца\r] [\yУрон x2\r]^n^n")                                  
-			key0 |= MENU_KEY_4                                                                                               
+			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\d2. [Locked]^n")                                        
+			key0 |= MENU_KEY_2
 		}
 		
-		if(get_user_flags(id) & VIP_FLAG)                                                                                
+		if(crxranks_get_user_level(id) >= 20)  
+		{
+		
+		       if(s_knife2[id])
+		        {
+			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\d3. Minecraft Sword [X3 DMG + Knockback] \r~Selected^n")                            
+			key0 &= ~MENU_KEY_3
+		        }                                                                                                              
+		        else
+		         {
+			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r3. \wMinecraft Sword \y[X3 DMG + Knockback^n")                              
+			key0 |= MENU_KEY_3 
+		        }   
+		}
+		else
+		{
+			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\d3. [Locked]^n")                              
+			key0 |= MENU_KEY_3 
+		}
+		
+		
+		if(crxranks_get_user_level(id) >= 30)  
+		{
+		
+                         if (s_knife3[id])                                                                                   
+		       {
+			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\d4. Ruyi Stick [Extra Jump] \r~Selected^n")                            
+			key0 &= ~MENU_KEY_4
+		       }                                                                                                                 
+		       else
+		       {                                                                                                               
+			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r4. \wRuyi Stick \y[Extra Jump]^n")                                  
+			key0 |= MENU_KEY_4                                                                                               
+		       }
+                  }
+	         else
+		{
+			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\d4. [Locked]^n")                                  
+			key0 |= MENU_KEY_4 
+		}
+		
+		if(crxranks_get_user_level(id) >= 40)                                                                                 
 		{                                                                                       
 			if(s_knife4[id])
 			{
-				iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r[\y5\r] [\yСудный день\r] [\yVIP\r] [\wВыбрано\r]^n")                            
+				iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\d5. Axe Flame [X4 DMG + Knockback++] \r~Selected^n")                            
 				key0 &= ~MENU_KEY_5                                                                                      
 			}                                                                                                                 
 			else                                                                                                                 
 			{                                                                                                                        
-				iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r[\y5\r] [\yСудный день\r] [\yVIP\r]^n")                                     
+				iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r5. \wAxe Flame \y[X4 DMG + Knockback++]^n")                                     
 				key0 |= MENU_KEY_5                                                                                                 
 			}                                                                                                                   
 		}                                                                                                             
 		else                                                                                                             
 		{                                                                                         
-			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\d[5] Вы не [\rVIP\d]^n^n")                            
+			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\d5. [Locked]^n^n")                            
 			key0 &= ~MENU_KEY_5                                                                                          
 		}                                                                                                              
 		
-		if(get_user_flags(id) & ADMIN_FLAG)
+		if(crxranks_get_user_level(id) >= 60)  
 		{ 
 			if(s_knife5[id])
 			{                                                                                                                  
-				iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r[\y6\r] [\yХамер Силы\r] [\yАдмин\r] [\wВыбрано\r]^n")                            
+				iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\d6. WarHammer Fire [X5 DMG + Knockback+++] \r~Selected^n")                            
 				key0 &= ~MENU_KEY_6
 			}                                                                                                                 
 			else                                                                                                                 
 			{
-				iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r[\y6\r] [\yХамер Силы\r] [\yАдмин\r]^n")                            
+				iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r6. \wWarHamme Fire \y[X5 DMG + Knockback+++] \r~Selected^n")                            
 				key0 |= MENU_KEY_6                                                                                            
 			}                                                                                                                       
 		}                                                                                                                     
 		else
 		{                                                                          
-			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\d[6] Вы не [\rАдмин\d]^n^n")                               
+			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\d6. [Locked]^n")                               
 			key0 &= ~MENU_KEY_6
 		}
 		
-		if(get_user_flags(id) & SOZDATEL_FLAG)                                                                           
+		if(get_user_flags(id) & ADMIN_LEVEL_H)                                                                           
 		{
 			if(s_knife6[id])
 			{
-				iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r[\y7\r] [\yХамер Власти\r] [\yСоздатель\r] [\wВыбрано\r]^n")                            
+				iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\d7. Blood Ripper [Distance shooting] \r~Selected^n^n")                            
 				key0 &= ~MENU_KEY_7
 			}                                                                                                                 
 			else                                                                                                                 
 			{                                                                             
-				iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r[\y7\r] [\yХамер Власти\r] [\yСоздатель\r]^n^n")                                  
+				iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\r7. Blood Ripper \y[Distance shooting]^n^n")                                  
 				key0 |= MENU_KEY_7                                                                                                     
 			}
 		}
 		else
 		{                                                                                                                
-			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\d[7] Вы не [\rСоздатель\d]^n^n")
+			iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\d7. Blood Ripper \r[VIP]^n^n")
 			key0 &= ~MENU_KEY_7                                                                                      
-		}                                                                                                
+		}   
 		
-		iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\y[\w0\y] \rВыход")                                          
+		
+		iLen += formatex(menu[iLen], charsmax(menu) - iLen, "\y[\w0\y] \rExit�")                                          
 		key0 |= MENU_KEY_0                                                                    
 		
-		show_menu(id, key0, menu, -1, "Menu_0")    
-		// after displaying the menu, we will disable the menu for that player  
-		g_block_knife[id] = false                                                                      
+		show_menu(id, key0, menu, -1, "Menu_0")   
+		// after displaying the menu, we will disable the menu for that player    
+		g_block_knife_menu[id] = false 
 	}                                                                                         
 	else                                                          
 	{
-		color_print(id, "%s !gДоступ !tтолько !gчеловеку",PREFIKS)
-	}
+		color_print(id, "!gsG | !nChoose again next round.",PREFIKS)
+	} 
 }                                                                
+
+
 
 public Key_0(id, key)                                       
 {                                                                                               
@@ -796,8 +715,8 @@ public Key_0(id, key)
 			g_block[id] = true                                       
 			start_menu(id)
 			buy_sound(id)
-			color_print(id, "%s !gВы !tвыбрали !gнож!t: [!gСтандартный!t]",PREFIKS) 
-			color_print(id, "%s !gСпособности!t: [!gНету!t]",PREFIKS)
+			//color_print(id, "%s !g?? !t??????? !g???!t: [!g???????????!t]",PREFIKS) 
+			//color_print(id, "%s !g???????????!t: [!g????!t]",PREFIKS)
 			
 			if(is_user_alive(id))                             
 			{
@@ -809,7 +728,7 @@ public Key_0(id, key)
 			}                                                                      
 		}                                                                                     
 		case 1:                                                         
-		{                                                                                               
+		{           
 			g_knife1[id] = true          
 			g_knife2[id] = false
 			g_knife3[id] = false
@@ -817,7 +736,7 @@ public Key_0(id, key)
 			g_knife5[id] = false
 			g_knife6[id] = false
 			
-			s_knife0[id] = false
+			s_knife0[id] = false 
 			s_knife1[id] = true
 			s_knife2[id] = false
 			s_knife3[id] = false
@@ -828,8 +747,8 @@ public Key_0(id, key)
 			g_block[id] = true
 			start_menu(id)                                                               
 			buy_sound(id)
-			color_print(id, "%s !gВы !tвыбрали !gнож!t: [!gПротон!t]",PREFIKS)
-			color_print(id, "%s !gСпособности!t: [!gУвеличение Скорости!t]",PREFIKS)
+			//color_print(id, "%s !g?? !t??????? !g???!t: [!g??????!t]",PREFIKS)
+			//color_print(id, "%s !g???????????!t: [!g?????????? ????????!t]",PREFIKS)
 			
 			if(is_user_alive(id))                             
 			{
@@ -860,8 +779,8 @@ public Key_0(id, key)
 			g_block[id] = true
 			start_menu(id) 
 			buy_sound(id)
-			color_print(id, "%s !gВы !tвыбрали !gнож!t: [!gТемная ночь!t]",PREFIKS)
-			color_print(id, "%s !gСпособности!t: [!gУменьшение Гравитации!t]",PREFIKS)
+			//color_print(id, "%s !g?? !t??????? !g???!t: [!g?????? ????!t]",PREFIKS)
+			//color_print(id, "%s !g???????????!t: [!g?????????? ??????????!t]",PREFIKS)
 			
 			if(is_user_alive(id))
 			{
@@ -892,8 +811,8 @@ public Key_0(id, key)
 			g_block[id] = true
 			start_menu(id)
 			buy_sound(id)
-			//color_print(id, "%s !gВы !tвыбрали !gнож!t: [!gЯрость Солнца!t]",PREFIKS)
-			//color_print(id, "%s !gСпособности!t: [!gУдвоение Урона!t]",PREFIKS)
+			//color_print(id, "%s !g?? !t??????? !g???!t: [!g?????? ??????!t]",PREFIKS)
+			//color_print(id, "%s !g???????????!t: [!g???????? ?????!t]",PREFIKS)
 			
 			if(is_user_alive(id))
 			{
@@ -924,8 +843,8 @@ public Key_0(id, key)
 			g_block[id] = true                                                                                                   
 			start_menu(id)
 			buy_sound(id)
-			color_print(id, "%s !gВы !tвыбрали !gнож!t: [!gСудный день!t]",PREFIKS)
-			color_print(id, "%s !gСпособности!t: [!gВсе способности + %d Прыжка!t]",PREFIKS,get_pcvar_num(gump_vip))
+			//color_print(id, "%s !g?? !t??????? !g???!t: [!g?????? ????!t]",PREFIKS)
+			//color_print(id, "%s !g???????????!t: [!g??? ??????????? + %d ??????!t]",PREFIKS,get_pcvar_num(gump_vip))
 			
 			if(is_user_alive(id))
 			{
@@ -956,8 +875,8 @@ public Key_0(id, key)
 			g_block[id] = true
 			start_menu(id)
 			buy_sound(id)
-		//	color_print(id, "%s !gВы !tвыбрали !gнож!t: [!gХамер Силы!t]",PREFIKS)
-		//	color_print(id, "%s !gСпособности!t: [!gВсе способности + %d Прыжка!t]",PREFIKS,get_pcvar_num(gump_admin))
+			//	color_print(id, "%s !g?? !t??????? !g???!t: [!g????? ????!t]",PREFIKS)
+			//	color_print(id, "%s !g???????????!t: [!g??? ??????????? + %d ??????!t]",PREFIKS,get_pcvar_num(gump_admin))
 			
 			if(is_user_alive(id))
 			{
@@ -988,8 +907,8 @@ public Key_0(id, key)
 			g_block[id] = true
 			start_menu(id)
 			buy_sound(id)
-		//	color_print(id, "%s !gВы !tвыбрали !gнож!t: [!gХамер Власти!t]",PREFIKS)
-			//color_print(id, "%s !gСпособности!t: [!gВсе способности + %d Прыжка!t]",PREFIKS,get_pcvar_num(gump_sozdatel))
+			//color_print(id, "%s !g?? !t??????? !g???!t: [!g????? ??????!t]",PREFIKS)
+			//color_print(id, "%s !g???????????!t: [!g??? ??????????? + %d ??????!t]",PREFIKS,get_pcvar_num(gump_sozdatel))
 			
 			if(is_user_alive(id))                                                  
 			{
@@ -1007,7 +926,12 @@ public Key_0(id, key)
 public buy_sound(id)
 {                                                                                                       
 	emit_sound(id, CHAN_BODY, Buy_Sound, 1.0, ATTN_NORM, 0, PITCH_NORM)                                
-}                           
+}                
+
+public zp_user_humanized_post(id)
+{
+	g_block_knife_menu[id] = false    
+}
 
 public client_PreThink(id)
 {
@@ -1157,14 +1081,9 @@ stock create_velocity_vector(victim,attacker,Float:velocity[3])
 		velocity[0] = ( origin2[0] * get_pcvar_float(knock_knife5) * 10000 ) / floatround(get_distance_f(vicorigin, attorigin));
 		velocity[1] = ( origin2[1] * get_pcvar_float(knock_knife5) * 10000 ) / floatround(get_distance_f(vicorigin, attorigin));
 	}
-	/* else if(g_has_survivoraxe[attacker])
-{
-	velocity[0] = ( origin2[0] * get_pcvar_float(cvar_knock_surv) * 10000 ) / floatround(get_distance_f(vicorigin, attorigin));
-	velocity[1] = ( origin2[1] * get_pcvar_float(cvar_knock_surv) * 10000 ) / floatround(get_distance_f(vicorigin, attorigin));
-} */
-
-if(velocity[0] <= 20.0 || velocity[1] <= 20.0)
-	velocity[2] = random_float(200.0 , 275.0);
+	
+	if(velocity[0] <= 20.0 || velocity[1] <= 20.0)
+		velocity[2] = random_float(200.0 , 275.0);
 	
 	return 1;
 }
@@ -1193,4 +1112,3 @@ stock color_print(const id, const input[], any:...)
 	}
 }
 }
-
