@@ -20,7 +20,7 @@ public create_zombies()
 	iMaxHumans = zp_core_get_human_count()
 	if (iMaxHumans < (get_pcvar_num(cvar_zombiecount) + 1)) return;
 	
-	if (zp_gamemodes_get_current() != ZP_NO_GAME_MODE) return;
+	if (zp_gamemodes_get_current() == ZP_NO_GAME_MODE) return;
 	
 	new iZombies, id, alive_count = GetAliveCount()
 	new iMaxZombies  = get_pcvar_num(cvar_zombiecount)
